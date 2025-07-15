@@ -1,3 +1,7 @@
+* {
+    font-family: Arial, Helvetica, sans-serif   ;
+}
+
 html {
     display: flex;
     justify-content: center;
@@ -21,24 +25,50 @@ html {
     background-color: forestgreen;
     width: 600px;
     height: 600px;
+    border-radius: 40px;
+    overflow: hidden;
     }   
+
+    button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    button:active {
+        scale: 0.9;
+    }
     
     #title {
     background-color: green;
     color: white;
     margin: 0px;
     grid-area: title;
+    font-size: 40px;
     }
     
     #open-input {
-    grid-area: open;
+        grid-area: open;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #file-input {
+        position: absolute;
+        opacity: 0;
+        inset: 0;
     }
     
     #beats {
     grid-area: beats;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     }
     
     #scrub-input {
+        position: relative;
     grid-area: scrub;
     }
     
@@ -48,14 +78,38 @@ html {
     #play-button {
     grid-area: playpause;
     }
+
+    #icon-play {
+       
+    }
+    
+    #icon-pause {
+        display: none;
+    }
+
     #next-button {
     grid-area: next;
     }
     
     #volume-input {
+        position: relative;
     grid-area: volume;
     }
     
     #tumo {
     grid-area: tumo;
+    }
+
+    .range-bar {
+        position: absolute;
+        inset: 0;
+        background-color: white;
+        transform-origin: left;
+        transform: scaleX(0.5);
+        pointer-events: none;
+    }
+
+    input[type="range"] {
+        width:100%;
+        opacity: 0;
     }
