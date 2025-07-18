@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="shortcut icon" href="images/app_logo.svg">
     <script src="script.js"></script>
 </head>
     <body>
@@ -66,8 +68,20 @@
         </div>
 
         <div id="volume-input">
-            <input type="range">
-            <div class="range-bar"></div>
+            <svg id="unmuted-icon" width="64" height="100%" viewBox="0 0 32 26">
+                <path fill="white"
+                    d="M 0,18.645885 H 3.9281859 L 18.356589,25.968857 V -4.4045092e-7 L 3.9281859,7.3229713 H 0 Z" />
+                <g style="stroke-width:4;stroke:white">
+                    <path d="M 23.109891,12.984429 H 32" />
+                    <path d="m 20.403101,18.197253 7.699038,6.061451" />
+                    <path d="M 20.403101,7.7716036 28.102139,1.7101522" />
+                </g>
+            </svg>
+            <div class ="container">
+                <input type="range">
+                <div class="range-bar"></div>
+
+            </div>
         </div>
         <div id="open-input">
             <input id="file-input" type="file">

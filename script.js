@@ -1,7 +1,13 @@
 window.onload = async function() {
 
-    //carregar dados da internet (data.json)
 
+    // Carregar o service worker
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js");
+    }
+
+
+    //carregar dados da internet (data.json)
     let request = await fetch("data.json");
     let audioData = await request.json();
 
@@ -19,7 +25,7 @@ window.onload = async function() {
 
     let audio = document.querySelector("audio");
     let currentMusic = 0;
-    console.log(audioData[currentMusic]);
+    let pauseTime = 0;
 
 
 
@@ -33,66 +39,111 @@ window.onload = async function() {
     }
 
     function updateInputBar(value, bar) {
-        bar.style.transform = "scaleX(" + event.target.value / 100 + ")";
+        bar.style.transform = "scaleX(" + value / 100 + ")";
     }
 
 
     previousButton.onclick = function() {
-        console.log("previous button clicked")
+        
+        currentMusic--;
+        if(currentMusic < 0) {
+            currentMusic = audioData.length-1;
+        }
+        playAudio();
     }
 
     playButton.onclick = function() {
         
         if(audio.paused) {
             playAudio();
+            audio.currentTime = pauseTime;
+            pauseTime = 0
         } else {
+            pauseTime = audio.currentTime;
             pauseAudio();
         }
-              
-        console.log("play button clicked")
     }
 
     nextButton.onclick = function() {
-        console.log("next button clicked")
+        currentMusic++;
+        if(currentMusic >= audioData.length) {
+            currentMusic = 0;
+        }
+        playAudio();
     }
 
     scrubInput.querySelector("input").oninput = function(event) {
         let bar = scrubInput.querySelector(".range-bar");
+        let scrubValue = scrubInput.querySelector("input").value
+        scrubAudio(scrubValue);
         updateInputBar(event.target.value, bar)
     }
 
     volumeInput.querySelector("input").oninput = function(event) {
         let bar = volumeInput.querySelector(".range-bar");
+
+        let volumeValue = volumeInput.querySelector("input").value  / 100;
+        audio.volume = volumeValue;
         updateInputBar(event.target.value, bar)
     }
 
     fileInput.oninput = function() {
-        console.log("aqui!??!!")
+        
+        let file = Array.from(fileInput.files)[0];
+        let reader = new FileReader();
+        reader.onload = function() {
+            audioData.push({
+                title: file.name,
+                url: reader.result
+            })
+        }
+        if(file) {
+            reader.readAsDataURL(file);
+        }
+
     }
 
     function playAudio() {
 
         audio.src = audioData[currentMusic].url;
+        changeTitle(audioData[currentMusic].title)
         audio.play();
     }
     function pauseAudio() {
         audio.pause();
     }
 
+    function scrubAudio(value) {
+
+        if(!audio.src) {
+            return;
+        }
+        audio.currentTime = audio.duration * (value/100)
+    }
+
     audio.onplay = function (){
         let playIcon = document.querySelector("#icon-play")
         let pauseIcon = document.querySelector("#icon-pause")
         playIcon.style.display = "none";
-        pauseIcon.style.display = "block";
+        pauseIcon.style.display = "initial";
     }
 
     audio.onpause = function() {
         let playIcon = document.querySelector("#icon-play")
         let pauseIcon = document.querySelector("#icon-pause")
-        playIcon.style.display = "block";
+        playIcon.style.display = "initial";
         pauseIcon.style.display = "none";
     }
 
-        changeTitle("João")
-        console.log(title);
+    audio.ontimeupdate = function() {
+        let bar = scrubInput.querySelector(".range-bar");
+        let value = (audio.currentTime / audio.duration) * 100;
+        updateInputBar(value, bar);
+    }
+
+    audio.onended = function() {
+        nextButton.click()
+    }
+
+        
 }
